@@ -1,35 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Case } from "./components/Case"
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+    return (
+        <div className="flex h-full w-full bg-background">
+            <div className="flex h-full w-full items-center justify-center">
+                <div className="flex max-w-[564px] flex-wrap">
+                    {Array.from({ length: 10 }, (_, i) =>
+                        Array.from({ length: 10 }, (_, j) => (
+                            <Case
+                                key={`${i}-${j}`}
+                                bgColor={
+                                    i % 2 === 0
+                                        ? j % 2 === 0
+                                            ? "bg-amber-900"
+                                            : "bg-amber-700"
+                                        : j % 2 === 0
+                                          ? "bg-amber-700"
+                                          : "bg-amber-900"
+                                }
+                            />
+                        )),
+                    )}
+                </div>
+            </div>
+        </div>
+    )
 }
-
-export default App
