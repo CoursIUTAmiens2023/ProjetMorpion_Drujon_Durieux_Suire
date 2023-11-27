@@ -4,14 +4,29 @@
 @tailwind utilities;
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  /*font-family: "Montserrat", sans-serif;*/
-  scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /*font-family: "Montserrat", sans-serif;*/
+    scroll-behavior: smooth;
 }
 
-html, body, #root{
-  height: 100%;
-  width: 100%;
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+@keyframes rotate180 {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(180deg);
+    }
+}
+
+.rotate {
+    animation: rotate180 1s linear infinite;
 }

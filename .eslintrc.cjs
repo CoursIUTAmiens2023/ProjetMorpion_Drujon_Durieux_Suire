@@ -6,8 +6,8 @@ module.exports = {
     },
     parser: "@typescript-eslint/parser",
     extends: [
-        "plugin:@typescript-eslint/recommended",
         "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
         "prettier",
         "plugin:react/recommended",
         "plugin:tailwindcss/recommended",
@@ -17,4 +17,4 @@ module.exports = {
         "prettier/prettier": ["error", { endOfLine: "auto" }],
         "react/react-in-jsx-scope": "off",
     },
-};
+}
