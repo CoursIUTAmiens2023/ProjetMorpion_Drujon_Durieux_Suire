@@ -8,6 +8,8 @@ import {
     isPionToEat,
     isSamePosition,
 } from "../../utils/utilsFunction"
+import useMandatoryPawn from "../../StateManager/MandatoryPawn"
+import { FaCrown } from "react-icons/fa"
 
 interface CaseProps {
     bgColor: string
@@ -28,15 +30,46 @@ export function Case({ bgColor, pion, position }: CaseProps) {
     const setTab = useTabPion((state) => state.setTab)
     const tab = useTabPion((state) => state.tab)
 
+    const mandatoryPawn = useMandatoryPawn((state) => state.mandatoryPawn)
+
+    //TODO: afficher si un coup est obligatoire
+
+    // check if the pawn is a mandatory pawn
+    const isMandatoryPawn = useMemo(() => {
+        if (!mandatoryPawn) return false
+        return mandatoryPawn.some((p) => isSamePosition(p.position, position))
+    }, [mandatoryPawn])
+
+    // check if the case is eatable
     const isEatableCaseMemo = useMemo(
         () => isEatableCase(selectedPion, position, tab, pion),
         [selectedPion, position, tab, pion],
     )
 
-    const isMovableCaseMemo = useMemo(
-        () => isMovableCase(selectedPion, position, turn, pion),
-        [selectedPion, position, turn, pion],
-    )
+    // check if the case is movable
+    const isMovableCaseMemo = useMemo(() => {
+        if (
+            selectedPion &&
+            mandatoryPawn?.some((p) =>
+                isSamePosition(p.position, selectedPion.position),
+            )
+        )
+            return false
+        return isMovableCase(selectedPion, position, turn, pion)
+    }, [selectedPion, position, turn, pion])
+
+    // find the good border color for the pawn
+    const borderColor = useMemo(() => {
+        if (isMandatoryPawn) {
+            return "border-4 border-yellow-500"
+        } else if (
+            selectedPion &&
+            isSamePosition(position, selectedPion.position)
+        ) {
+            return "border-4 border-red-600"
+        }
+        return ""
+    }, [mandatoryPawn, position, selectedPion])
 
     // move the pawn
     const Move = useCallback(() => {
@@ -46,16 +79,16 @@ export function Case({ bgColor, pion, position }: CaseProps) {
             // delete the pawn from the old position
             if (isSamePosition(p.position, selectedPion.position)) {
                 return {
+                    ...p,
                     color: null,
-                    position: p.position,
                 }
             }
 
             // add the pawn to the new position
             if (isSamePosition(p.position, position)) {
                 return {
+                    ...p,
                     color: selectedPion.color,
-                    position: p.position,
                 }
             }
 
@@ -75,16 +108,16 @@ export function Case({ bgColor, pion, position }: CaseProps) {
             // delete the pawn from the old position
             if (isSamePosition(p.position, selectedPion.position)) {
                 return {
+                    ...p,
                     color: null,
-                    position: p.position,
                 }
             }
 
             // add the pawn to the new position
             if (isSamePosition(p.position, position)) {
                 return {
+                    ...p,
                     color: selectedPion.color,
-                    position: p.position,
                 }
             }
 
@@ -98,8 +131,8 @@ export function Case({ bgColor, pion, position }: CaseProps) {
 
             if (isSamePosition(p.position, eatenPosition)) {
                 return {
+                    ...p,
                     color: null,
-                    position: p.position,
                 }
             }
 
@@ -131,17 +164,21 @@ export function Case({ bgColor, pion, position }: CaseProps) {
                 }
                 onClick={() => {
                     if (pion.color !== null) {
-                        // select the pawn
-                        if (turn % 2 === 0 && pion.color === "black") {
-                            setSelectedPion(pion)
-                        } else if (turn % 2 !== 0 && pion.color === "white") {
+                        // Sélectionner le pion ne peux jouer que si c'est son tour
+                        if (
+                            (turn % 2 === 0 && pion.color === "black") ||
+                            (turn % 2 !== 0 && pion.color === "white")
+                        ) {
+                            // Ne peux jouer qu'un mandataryPawn si il y en a
+                            if (!isMandatoryPawn) return
+
                             setSelectedPion(pion)
                         }
                     } else if (isMovableCaseMemo) {
-                        // if the player click on moveable case (blue case)
+                        // Si le joueur clique sur une case déplaçable (case bleue)
                         Move()
                     } else if (isEatableCaseMemo) {
-                        // if the player click eatable case (blue case)
+                        // Si le joueur clique sur une case mangeable (case bleue)
                         eatPion()
                     }
                 }}
@@ -154,13 +191,14 @@ export function Case({ bgColor, pion, position }: CaseProps) {
                                 : pion.color === "black"
                                   ? "bg-black"
                                   : ""
-                        } ${
-                            selectedPion &&
-                            isSamePosition(position, selectedPion.position)
-                                ? "border-4 border-red-600"
-                                : ""
-                        }`}
-                    />
+                        } ${borderColor}`}
+                    >
+                        {pion.isQueen && (
+                            <span className="flex h-full items-center justify-center text-xl text-yellow-500">
+                                <FaCrown />
+                            </span>
+                        )}
+                    </div>
                 )}
             </button>
         </div>

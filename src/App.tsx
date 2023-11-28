@@ -1,14 +1,31 @@
+import { useEffect } from "react"
 import { Case } from "./components/Case"
 import { useTabPion, useTurnPion } from "./StateManager/GameManager"
+import { MendatoryEat } from "./utils"
+import useMandatoryPawn from "./StateManager/MandatoryPawn"
 
 export interface Pion {
     color: "white" | "black" | null
     position: number[]
+    isQueen: boolean
 }
 
 export default function App() {
     const tab = useTabPion((state) => state.tab)
     const turn = useTurnPion((state) => state.turn)
+    const setMandatoryPawn = useMandatoryPawn((state) => state.setMandatoryPawn)
+    const resetMandatoryPawn = useMandatoryPawn(
+        (state) => state.resetMandatoryPawn,
+    )
+
+    useEffect(() => {
+        const mendatoryPawn = MendatoryEat(tab, turn)
+        if (mendatoryPawn.length > 0) {
+            setMandatoryPawn(mendatoryPawn)
+        } else {
+            resetMandatoryPawn()
+        }
+    }, [tab, turn])
 
     return (
         <div className="flex h-full w-full items-center justify-center bg-amber-500">

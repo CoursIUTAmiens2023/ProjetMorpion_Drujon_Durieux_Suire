@@ -116,6 +116,22 @@ export function isPionToEat(selectedPion: Pion | null, tab: Pion[]) {
     )
 }
 
+export function MendatoryEat(tab: Pion[], turn: number) {
+    const allyPawnColor = turn % 2 === 0 ? "black" : "white"
+
+    const tabToCheck = tab.filter(
+        (p) => p.color === allyPawnColor && p.color !== null,
+    )
+
+    const returnValue: Pion[] = []
+    tabToCheck.forEach((p) => {
+        if (isPionToEat(p, tab)) {
+            returnValue.push(p)
+        }
+    })
+    return returnValue
+}
+
 // check if the position is the sames
 export function isSamePosition(pos1: number[], pos2: number[]) {
     return pos1[0] === pos2[0] && pos1[1] === pos2[1]
