@@ -7,18 +7,17 @@ import {
     isMovableCase,
     isPionToEat,
     isSamePosition,
+    queenMovableCase,
 } from "../../utils/utilsFunction"
 import useMandatoryPawn from "../../StateManager/MandatoryPawn"
-import { FaCrown } from "react-icons/fa"
 
-interface CaseProps {
+export interface CaseProps {
     bgColor: string
-    pion: Pion | null
-    position: number[]
+    pion: Pion
 }
 
-export function Case({ bgColor, pion, position }: CaseProps) {
-    const setSelectedPion = useSelectedPion((state) => state.setSelectedPion)
+export function Case({ bgColor, pion }: CaseProps) {
+    const { position, color } = pion
     const resetSelectedPion = useSelectedPion(
         (state) => state.resetSelectedPion,
     )
@@ -32,44 +31,37 @@ export function Case({ bgColor, pion, position }: CaseProps) {
 
     const mandatoryPawn = useMandatoryPawn((state) => state.mandatoryPawn)
 
-    //TODO: afficher si un coup est obligatoire
-
-    // check if the pawn is a mandatory pawn
-    const isMandatoryPawn = useMemo(() => {
-        if (!mandatoryPawn) return false
-        return mandatoryPawn.some((p) => isSamePosition(p.position, position))
-    }, [mandatoryPawn])
-
     // check if the case is eatable
     const isEatableCaseMemo = useMemo(
-        () => isEatableCase(selectedPion, position, tab, pion),
-        [selectedPion, position, tab, pion],
+        () =>
+            selectedPion &&
+            selectedPion.isQueen === false &&
+            isEatableCase(selectedPion, position, tab, color),
+        [selectedPion, position, tab, color],
     )
 
     // check if the case is movable
     const isMovableCaseMemo = useMemo(() => {
-        if (
-            selectedPion &&
-            mandatoryPawn?.some((p) =>
-                isSamePosition(p.position, selectedPion.position),
-            )
-        )
-            return false
-        return isMovableCase(selectedPion, position, turn, pion)
-    }, [selectedPion, position, turn, pion])
+        if (mandatoryPawn) return false
 
-    // find the good border color for the pawn
-    const borderColor = useMemo(() => {
-        if (isMandatoryPawn) {
-            return "border-4 border-yellow-500"
-        } else if (
+        return (
             selectedPion &&
-            isSamePosition(position, selectedPion.position)
-        ) {
-            return "border-4 border-red-600"
+            selectedPion.isQueen === false &&
+            isMovableCase(selectedPion, position, turn, color)
+        )
+    }, [selectedPion, position, turn, color, mandatoryPawn])
+
+    // check if the case is movable
+    const isQueenMovableCaseMemo = useMemo(() => {
+        let queenMovableListCase: number[][] = []
+        if (selectedPion && selectedPion.isQueen) {
+            queenMovableListCase = queenMovableCase(selectedPion, tab)
         }
-        return ""
-    }, [mandatoryPawn, position, selectedPion])
+
+        return queenMovableListCase.some((queenMovableCase) =>
+            isSamePosition(queenMovableCase, position),
+        )
+    }, [selectedPion, position, color])
 
     // move the pawn
     const Move = useCallback(() => {
@@ -152,55 +144,57 @@ export function Case({ bgColor, pion, position }: CaseProps) {
         }
     }, [selectedPion, position, tab, setTab, resetSelectedPion, pastTurn])
 
-    if (!pion) return <div className={`relative h-14 w-14 ${bgColor}`}></div>
+    const MoveQueen = useCallback(() => {
+        if (!selectedPion) return
+
+        const updatedTab = tab.map((p) => {
+            // delete the pawn from the old position
+            if (isSamePosition(p.position, selectedPion.position)) {
+                return {
+                    ...p,
+                    color: null,
+                }
+            }
+
+            // add the pawn to the new position
+            if (isSamePosition(p.position, position)) {
+                return {
+                    ...p,
+                    color: selectedPion.color,
+                }
+            }
+
+            return p
+        })
+
+        setTab(updatedTab)
+        resetSelectedPion()
+        pastTurn()
+    }, [selectedPion, position, tab, setTab, resetSelectedPion, pastTurn])
 
     return (
         <div className={`relative h-14 w-14 ${bgColor}`}>
             <button
                 className={
-                    isMovableCaseMemo || isEatableCaseMemo
+                    isMovableCaseMemo ||
+                    isEatableCaseMemo ||
+                    isQueenMovableCaseMemo
                         ? " h-full w-full bg-blue-500 opacity-50"
                         : ""
                 }
                 onClick={() => {
-                    if (pion.color !== null) {
-                        // Sélectionner le pion ne peux jouer que si c'est son tour
-                        if (
-                            (turn % 2 === 0 && pion.color === "black") ||
-                            (turn % 2 !== 0 && pion.color === "white")
-                        ) {
-                            // Ne peux jouer qu'un mandataryPawn si il y en a
-                            if (!isMandatoryPawn) return
-
-                            setSelectedPion(pion)
-                        }
-                    } else if (isMovableCaseMemo) {
+                    if (isMovableCaseMemo) {
                         // Si le joueur clique sur une case déplaçable (case bleue)
                         Move()
                     } else if (isEatableCaseMemo) {
                         // Si le joueur clique sur une case mangeable (case bleue)
                         eatPion()
+                    } else if (isQueenMovableCaseMemo) {
+                        // Si le joueur clique sur une case déplaçable (case bleue)
+                        MoveQueen()
                     }
                 }}
-            >
-                {pion && (
-                    <div
-                        className={` m-2 h-10 w-10 rounded-full ${
-                            pion.color === "white"
-                                ? "bg-white"
-                                : pion.color === "black"
-                                  ? "bg-black"
-                                  : ""
-                        } ${borderColor}`}
-                    >
-                        {pion.isQueen && (
-                            <span className="flex h-full items-center justify-center text-xl text-yellow-500">
-                                <FaCrown />
-                            </span>
-                        )}
-                    </div>
-                )}
-            </button>
+            />
         </div>
     )
 }
