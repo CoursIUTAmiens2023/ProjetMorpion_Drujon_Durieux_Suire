@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Case, CasePawn, CaseQueen } from "./components/Case"
 import { useTabPion, useTurnPion } from "./StateManager/GameManager"
-import { MendatoryEat } from "./utils"
+import { mendatoryEat, mendatoryEatForQueen } from "./utils"
 import useMandatoryPawn from "./StateManager/MandatoryPawn"
 
 export type ColorPawn = "white" | "black" | null
@@ -21,13 +21,16 @@ export default function App() {
     )
 
     useEffect(() => {
-        const mendatoryPawn = MendatoryEat(tab, turn)
+        const mendatoryPawn = mendatoryEat(tab, turn).concat(
+            mendatoryEatForQueen(tab, turn),
+        )
+
         if (mendatoryPawn.length > 0) {
             setMandatoryPawn(mendatoryPawn)
         } else {
             resetMandatoryPawn()
         }
-    }, [tab, turn])
+    }, [tab, turn, setMandatoryPawn, resetMandatoryPawn, mendatoryEat])
 
     return (
         <div className="flex h-full w-full items-center justify-center bg-amber-500">

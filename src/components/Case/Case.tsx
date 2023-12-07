@@ -5,6 +5,7 @@ import useSelectedPion from "../../StateManager/SelectedPion"
 import {
     isEatableCase,
     isMovableCase,
+    isPawnToEatForQueen,
     isPionToEat,
     isSamePosition,
     queenMovableCase,
@@ -31,36 +32,46 @@ export function Case({ bgColor, pion }: CaseProps) {
 
     const mandatoryPawn = useMandatoryPawn((state) => state.mandatoryPawn)
 
-    // check if the case is eatable
+    // check if the case is eatable for the pawn
     const isEatableCaseMemo = useMemo(
         () =>
             selectedPion &&
             selectedPion.isQueen === false &&
-            isEatableCase(selectedPion, position, tab, color),
+            isEatableCase(
+                selectedPion,
+                { pawnPos: position, pawnColor: color },
+                tab,
+            ),
         [selectedPion, position, tab, color],
     )
 
-    // check if the case is movable
+    // check if the case is movable for the pawn
     const isMovableCaseMemo = useMemo(() => {
         if (mandatoryPawn) return false
 
         return (
             selectedPion &&
             selectedPion.isQueen === false &&
-            isMovableCase(selectedPion, position, turn, color)
+            isMovableCase(selectedPion.position, position, color)
         )
     }, [selectedPion, position, turn, color, mandatoryPawn])
 
-    // check if the case is movable
+    // check if the case is movable or eatable for the queen
     const isQueenMovableCaseMemo = useMemo(() => {
-        let queenMovableListCase: number[][] = []
         if (selectedPion && selectedPion.isQueen) {
-            queenMovableListCase = queenMovableCase(selectedPion, tab)
+            // check is the case is on diagonal with the selected pion
+            const isOnDiagonal =
+                Math.abs(selectedPion.position[0] - position[0]) ===
+                Math.abs(selectedPion.position[1] - position[1])
+            if (!isOnDiagonal) return false
+
+            const queenMovableListCase = queenMovableCase(selectedPion, tab)
+            return queenMovableListCase.some((queenMovableCase) =>
+                isSamePosition(queenMovableCase, position),
+            )
         }
 
-        return queenMovableListCase.some((queenMovableCase) =>
-            isSamePosition(queenMovableCase, position),
-        )
+        return false
     }, [selectedPion, position, color])
 
     // move the pawn
@@ -147,9 +158,52 @@ export function Case({ bgColor, pion }: CaseProps) {
     const MoveQueen = useCallback(() => {
         if (!selectedPion) return
 
+        // get the vector director
+        const vectorDirector = [
+            Math.sign(position[0] - selectedPion.position[0]),
+            Math.sign(position[1] - selectedPion.position[1]),
+        ]
+
+        const potentialPawnToRemove: number[][] = []
+
+        // Generate positions of the potentil pawns to remove
+        for (
+            let i = 1;
+            i <
+            Math.max(
+                Math.abs(position[0] - selectedPion.position[0]),
+                Math.abs(position[1] - selectedPion.position[1]),
+            );
+            i++
+        ) {
+            const newPosition = [
+                selectedPion.position[0] + i * vectorDirector[0],
+                selectedPion.position[1] + i * vectorDirector[1],
+            ]
+
+            potentialPawnToRemove.push(newPosition)
+        }
+
+        const ennemyColor = selectedPion.color === "white" ? "black" : "white"
+        let ennemyKilled = false
+
         const updatedTab = tab.map((p) => {
             // delete the pawn from the old position
             if (isSamePosition(p.position, selectedPion.position)) {
+                return {
+                    ...p,
+                    color: null,
+                }
+            }
+
+            // if there's a pawn in the path, delete it
+            if (
+                potentialPawnToRemove.some((pos) =>
+                    isSamePosition(pos, p.position),
+                ) &&
+                p.color === ennemyColor
+            ) {
+                ennemyKilled = true
                 return {
                     ...p,
                     color: null,
@@ -167,10 +221,38 @@ export function Case({ bgColor, pion }: CaseProps) {
             return p
         })
 
+        // if (mandatoryPawn) {
+        //     const newMandatory = mandatoryPawn.filter(
+        //         (pawn) => !isSamePosition(pawn.position, selectedPion.position),
+        //     )
+        //     console.log(newMandatory)
+        //     console.log(selectedPion.position)
+        //     if (newMandatory.length === 0) {
+        //         resetSelectedPion()
+        //         pastTurn()
+        //     }
+        // } else {
+        //     resetSelectedPion()
+        //     pastTurn()
+        // }
+
+        // update the tab
         setTab(updatedTab)
-        resetSelectedPion()
-        pastTurn()
-    }, [selectedPion, position, tab, setTab, resetSelectedPion, pastTurn])
+        selectedPion.position = position
+
+        if (!isPawnToEatForQueen(selectedPion, updatedTab) || !ennemyKilled) {
+            resetSelectedPion()
+            pastTurn()
+        }
+    }, [
+        selectedPion,
+        position,
+        tab,
+        setTab,
+        resetSelectedPion,
+        pastTurn,
+        mandatoryPawn,
+    ])
 
     return (
         <div className={`relative h-14 w-14 ${bgColor}`}>

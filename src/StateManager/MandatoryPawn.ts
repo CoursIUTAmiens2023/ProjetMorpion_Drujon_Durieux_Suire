@@ -9,7 +9,9 @@ interface useMandatoryPawnType {
 
 const useMandatoryPawn = create<useMandatoryPawnType>((set) => ({
     mandatoryPawn: null,
-    setMandatoryPawn: (pions: Pion[]) => set({ mandatoryPawn: pions }),
+    setMandatoryPawn: (pions: Pion[]) => {
+        set({ mandatoryPawn: pions })
+    },
     resetMandatoryPawn: () => set({ mandatoryPawn: null }),
 }))
 
