@@ -21,15 +21,14 @@ export default function App() {
     )
 
     useEffect(() => {
-        const mendatoryPawn = mendatoryEat(tab, turn).concat(
-            mendatoryEatForQueen(tab, turn),
-        )
-
-        if (mendatoryPawn.length > 0) {
-            setMandatoryPawn(mendatoryPawn)
-        } else {
-            resetMandatoryPawn()
-        }
+        // const mendatoryPawn = mendatoryEat(tab, turn).concat(
+        //     mendatoryEatForQueen(tab, turn),
+        // )
+        // if (mendatoryPawn.length > 0) {
+        //     setMandatoryPawn(mendatoryPawn)
+        // } else {
+        //     resetMandatoryPawn()
+        // }
     }, [tab, turn, setMandatoryPawn, resetMandatoryPawn, mendatoryEat])
 
     return (

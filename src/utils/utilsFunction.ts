@@ -61,7 +61,7 @@ export function allyColor(turn: number) {
  * true if the jump case is in the tab limit
  */
 export function isInTabLimit(jumpX: number, jumpY: number) {
-    return (jumpX >= 0 && jumpX < 10 && jumpY >= 0 && jumpY < 10) === false
+    return jumpX >= 0 && jumpX < 10 && jumpY >= 0 && jumpY < 10
 }
 
 /**
@@ -137,7 +137,7 @@ export function isEatMoveWithDirection(
     const jumpX = selectedPion.position[0] + 2 * stepX
     const jumpY = selectedPion.position[1] + 2 * stepY
 
-    if (isInTabLimit(jumpX, jumpY)) {
+    if (!isInTabLimit(jumpX, jumpY)) {
         return false
     }
 
@@ -204,7 +204,7 @@ export function isPionToEatWithDirection(
     const jumpY = selectedPion.position[1] + 2 * stepY
 
     // Check if the jump case is in the tab limit
-    if (isInTabLimit(jumpX, jumpY)) {
+    if (!isInTabLimit(jumpX, jumpY)) {
         return false
     }
 
@@ -304,13 +304,13 @@ export function findMovableCaseDirection(
             movableCases.push([row, col])
         } else if (pawnAtPosition.color === allyColor) {
             // If the case is occupied by an ally pawn,
-            return movableCases
+            break
         } else if (!isEatablePawnInWay) {
             // If the case is occupied by an enemy pawn, pass on the next case
             isEatablePawnInWay = true
         } else if (isEatablePawnInWay) {
             // If there's already a pawn in the way, break the loop
-            return movableCases
+            break
         }
 
         stepPos[0] += stepX
@@ -323,14 +323,21 @@ export function findMovableCaseDirection(
 export function queenMovableCase(selectedPion: Pion, tab: Pion[]) {
     const movableCases: number[][] = []
 
-    const addedMovableCases = movableCases.concat(
+    console.log(
+        "1",
+        findMovableCaseDirection(-1, -1, movableCases, selectedPion, tab),
+        "2",
+        findMovableCaseDirection(1, -1, movableCases, selectedPion, tab),
+    )
+
+    const addedMoveableCases = movableCases.concat(
         findMovableCaseDirection(1, 1, movableCases, selectedPion, tab),
         findMovableCaseDirection(1, -1, movableCases, selectedPion, tab),
         findMovableCaseDirection(-1, 1, movableCases, selectedPion, tab),
         findMovableCaseDirection(-1, -1, movableCases, selectedPion, tab),
     )
 
-    return addedMovableCases
+    return addedMoveableCases
 }
 
 // check if there is a pawn to eat for the queen
