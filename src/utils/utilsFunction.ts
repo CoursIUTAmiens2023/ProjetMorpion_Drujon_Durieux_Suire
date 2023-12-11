@@ -109,13 +109,12 @@ export function isMovableCase(
     position: number[],
     color: ColorPawn,
 ) {
-    const isAdjacentToSelectedPion =
-        Math.abs(position[0] - selectedPawnPos[0]) === 1 &&
-        Math.abs(position[1] - selectedPawnPos[1]) === 1
+    const isForwardCase =
+        position[1] > selectedPawnPos[1] && position[0] < selectedPawnPos[0]
 
-    const EmptyPawn = color === null
+    const isEmptyPawn = color === null
 
-    return isAdjacentToSelectedPion && EmptyPawn
+    return isForwardCase && isEmptyPawn
 }
 
 /**
