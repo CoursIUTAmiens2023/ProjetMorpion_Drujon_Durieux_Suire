@@ -164,7 +164,7 @@ export function isEatMoveWithDirection(
 
     return isEmpyCase && isAdjacentEnnemy
 }
-
+    
 /**
  * Check if the case can be hightlighted in blue for the selected pawn in one direction
  * @param selectedPion
