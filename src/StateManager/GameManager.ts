@@ -42,7 +42,7 @@ const generateInitialGrid = () => {
             const position = [i, j]
             if ((i + j) % 2 === 1) {
                 const color = i < 4 ? "white" : i > 5 ? "black" : null
-                initialPions.push({ isQueen: false, color, position })
+                initialPions.push({ isQueen: true, color, position })
             } else {
                 initialPions.push({ isQueen: false, color: null, position })
             }

@@ -3,6 +3,7 @@ import { Pion } from "../../App"
 import { useTabPion, useTurnPion } from "../../StateManager/GameManager"
 import useSelectedPion from "../../StateManager/SelectedPion"
 import {
+    isAtEdgeOfBoard,
     isEatableCase,
     isMovableCase,
     isPawnToEatForQueen,
@@ -18,7 +19,7 @@ export interface CaseProps {
 }
 
 export function Case({ bgColor, pion }: CaseProps) {
-    const { position, color } = pion
+    const { position: casePos, color: caseColor } = pion
     const resetSelectedPion = useSelectedPion(
         (state) => state.resetSelectedPion,
     )
@@ -33,46 +34,37 @@ export function Case({ bgColor, pion }: CaseProps) {
     const mandatoryPawn = useMandatoryPawn((state) => state.mandatoryPawn)
 
     // check if the case is eatable for the pawn
-    const isEatableCaseMemo = useMemo(
-        () =>
-            selectedPion &&
-            selectedPion.isQueen === false &&
-            isEatableCase(
-                selectedPion,
-                { pawnPos: position, pawnColor: color },
-                tab,
-            ),
-        [selectedPion, position, tab, color],
-    )
+    const isEatableCaseMemo = useMemo(() => {
+        if (!selectedPion) return false
+
+        return isEatableCase(
+            selectedPion,
+            { pawnPos: casePos, pawnColor: caseColor },
+            tab,
+        )
+    }, [selectedPion, casePos, tab, caseColor])
 
     // check if the case is movable for the pawn
     const isMovableCaseMemo = useMemo(() => {
-        if (mandatoryPawn) return false
+        if (mandatoryPawn || !selectedPion || selectedPion.isQueen) return false
 
-        return (
-            selectedPion &&
-            selectedPion.isQueen === false &&
-            isMovableCase(selectedPion.position, position, color)
-        )
-    }, [selectedPion, position, turn, color, mandatoryPawn])
+        return isMovableCase(selectedPion.position, casePos, caseColor, turn)
+    }, [selectedPion, casePos, turn, caseColor, mandatoryPawn])
 
     // check if the case is movable or eatable for the queen
     const isQueenMovableCaseMemo = useMemo(() => {
-        if (selectedPion && selectedPion.isQueen) {
-            // check is the case is on diagonal with the selected pion
-            const isOnDiagonal =
-                Math.abs(selectedPion.position[0] - position[0]) ===
-                Math.abs(selectedPion.position[1] - position[1])
-            if (!isOnDiagonal) return false
+        if (!selectedPion || selectedPion.isQueen === false) return false
+        // check is the case is on diagonal with the selected pion
+        const isOnDiagonal =
+            Math.abs(selectedPion.position[0] - casePos[0]) ===
+            Math.abs(selectedPion.position[1] - casePos[1])
+        if (!isOnDiagonal) return false
 
-            const queenMovableListCase = queenMovableCase(selectedPion, tab)
-            return queenMovableListCase.some((queenMovableCase) =>
-                isSamePosition(queenMovableCase, position),
-            )
-        }
-
-        return false
-    }, [selectedPion, position, color])
+        const queenMovableListCase = queenMovableCase(selectedPion, tab)
+        return queenMovableListCase.some((queenMovableCase) =>
+            isSamePosition(queenMovableCase, casePos),
+        )
+    }, [selectedPion, casePos, caseColor])
 
     // move the pawn
     const Move = useCallback(() => {
@@ -88,7 +80,7 @@ export function Case({ bgColor, pion }: CaseProps) {
             }
 
             // add the pawn to the new position
-            if (isSamePosition(p.position, position)) {
+            if (isSamePosition(p.position, casePos)) {
                 return {
                     ...p,
                     color: selectedPion.color,
@@ -98,10 +90,20 @@ export function Case({ bgColor, pion }: CaseProps) {
             return p
         })
 
+        selectedPion.position = casePos
+
+        if (isAtEdgeOfBoard(selectedPion)) {
+            updatedTab
+                .filter((p) =>
+                    isSamePosition(p.position, selectedPion.position),
+                )
+                .map((p) => (p.isQueen = true))
+        }
+
         setTab(updatedTab)
         resetSelectedPion()
         pastTurn()
-    }, [selectedPion, position, tab, setTab, resetSelectedPion, pastTurn])
+    }, [selectedPion, casePos, tab, setTab, resetSelectedPion, pastTurn])
 
     // eat the pawn (move the pawn and delete the pawn to eats)
     const eatPion = useCallback(() => {
@@ -117,7 +119,7 @@ export function Case({ bgColor, pion }: CaseProps) {
             }
 
             // add the pawn to the new position
-            if (isSamePosition(p.position, position)) {
+            if (isSamePosition(p.position, casePos)) {
                 return {
                     ...p,
                     color: selectedPion.color,
@@ -127,9 +129,9 @@ export function Case({ bgColor, pion }: CaseProps) {
             // delete the pawn to eat
             const eatenPosition = [
                 selectedPion.position[0] +
-                    (position[0] - selectedPion.position[0]) / 2,
+                    (casePos[0] - selectedPion.position[0]) / 2,
                 selectedPion.position[1] +
-                    (position[1] - selectedPion.position[1]) / 2,
+                    (casePos[1] - selectedPion.position[1]) / 2,
             ]
 
             if (isSamePosition(p.position, eatenPosition)) {
@@ -142,10 +144,19 @@ export function Case({ bgColor, pion }: CaseProps) {
             return p
         })
 
+        // update the selected pion position
+        selectedPion.position = casePos
+
+        if (isAtEdgeOfBoard(selectedPion)) {
+            updatedTab
+                .filter((p) =>
+                    isSamePosition(p.position, selectedPion.position),
+                )
+                .map((p) => (p.isQueen = true))
+        }
+
         // update the tab
         setTab(updatedTab)
-        // update the selected pion position
-        selectedPion.position = position
 
         // if the pawn can eat again
         if (!isPionToEat(selectedPion, updatedTab)) {
@@ -153,15 +164,15 @@ export function Case({ bgColor, pion }: CaseProps) {
             resetSelectedPion()
             pastTurn()
         }
-    }, [selectedPion, position, tab, setTab, resetSelectedPion, pastTurn])
+    }, [selectedPion, casePos, tab, setTab, resetSelectedPion, pastTurn])
 
     const MoveQueen = useCallback(() => {
         if (!selectedPion) return
 
         // get the vector director
         const vectorDirector = [
-            Math.sign(position[0] - selectedPion.position[0]),
-            Math.sign(position[1] - selectedPion.position[1]),
+            Math.sign(casePos[0] - selectedPion.position[0]),
+            Math.sign(casePos[1] - selectedPion.position[1]),
         ]
 
         const potentialPawnToRemove: number[][] = []
@@ -171,8 +182,8 @@ export function Case({ bgColor, pion }: CaseProps) {
             let i = 1;
             i <
             Math.max(
-                Math.abs(position[0] - selectedPion.position[0]),
-                Math.abs(position[1] - selectedPion.position[1]),
+                Math.abs(casePos[0] - selectedPion.position[0]),
+                Math.abs(casePos[1] - selectedPion.position[1]),
             );
             i++
         ) {
@@ -211,7 +222,7 @@ export function Case({ bgColor, pion }: CaseProps) {
             }
 
             // add the pawn to the new position
-            if (isSamePosition(p.position, position)) {
+            if (isSamePosition(p.position, casePos)) {
                 return {
                     ...p,
                     color: selectedPion.color,
@@ -238,7 +249,7 @@ export function Case({ bgColor, pion }: CaseProps) {
 
         // update the tab
         setTab(updatedTab)
-        selectedPion.position = position
+        selectedPion.position = casePos
 
         if (!isPawnToEatForQueen(selectedPion, updatedTab) || !ennemyKilled) {
             resetSelectedPion()
@@ -246,7 +257,7 @@ export function Case({ bgColor, pion }: CaseProps) {
         }
     }, [
         selectedPion,
-        position,
+        casePos,
         tab,
         setTab,
         resetSelectedPion,

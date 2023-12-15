@@ -25,15 +25,12 @@ export function CasePawn({ bgColor, pion }: CaseProps) {
             <button
                 onClick={() => {
                     // Sélectionner le pion ne peux jouer que si c'est son tour
-                    if (
-                        (turn % 2 !== 0 && color === "black") ||
-                        (turn % 2 === 0 && color === "white")
-                    ) {
-                        // Ne peux jouer qu'un mandataryPawn si il y en a
-                        if (mandatoryPawn && !isMandatoryPawn) return
+                    if (turn % 2 !== 0 && color === "white") return
+                    if (turn % 2 === 0 && color === "black") return
+                    // Ne peux jouer qu'un mandataryPawn si il y en a
+                    if (mandatoryPawn && !isMandatoryPawn) return
 
-                        setSelectedPion(pion)
-                    }
+                    setSelectedPion(pion)
                 }}
             >
                 <div

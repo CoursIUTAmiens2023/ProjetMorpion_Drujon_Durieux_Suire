@@ -1,5 +1,10 @@
 import { isMovableCase } from "../utils"
-import { allyColor, ennemyColor, isInTabLimit, isSamePosition, /*whichPawnAtPosition, functionInEveryDirection*/ } from "../utils"
+import {
+    allyColor,
+    ennemyColor,
+    isInTabLimit,
+    isSamePosition /*whichPawnAtPosition, functionInEveryDirection*/,
+} from "../utils"
 
 describe("isSamePosition", () => {
     it("should return true if the positions are the same", () => {
@@ -11,29 +16,7 @@ describe("isSamePosition", () => {
     })
 })
 
-describe("isMovableCase", () => {
-    // Test pour le cas où la case est vide et adjacente au pion sélectionné
-    it("should return true if the case is empty and adjacent to the selected pawn", () => {
-        expect(isMovableCase([1, 1], [2, 2], null)).toBe(true);
-    });
-
-    // Test pour le cas où la case n'est pas adjacente au pion sélectionné
-    it("should return false if the case is not adjacent to the selected pawn", () => {
-        expect(isMovableCase([1, 1], [3, 3], null)).toBe(false);
-    });
-
-    // Test pour le cas où la case est adjacente, mais elle n'est pas vide
-    it("should return false if the case is adjacent but not empty", () => {
-        expect(isMovableCase([1, 1], [2, 2], "white")).toBe(false);
-    });
-
-    // Test pour le cas où la case est vide, mais elle n'est pas adjacente
-    it("should return false if the case is empty but not adjacent to the selected pawn", () => {
-        expect(isMovableCase([1, 1], [4, 4], null)).toBe(false);
-    });
-});
-
-describe("ennemyColor",( ) => {
+describe("ennemyColor", () => {
     it("should return true if the colors are different", () => {
         expect(ennemyColor("white")).toBe("black")
     })
@@ -51,7 +34,6 @@ describe("ennemyColor",( ) => {
 //     })
 // })
 
-
 describe("allyColor", () => {
     it("should return true if the colors are the same", () => {
         expect(allyColor(3)).toBe("black")
@@ -63,7 +45,7 @@ describe("allyColor", () => {
 
 describe("isInTabLimit", () => {
     it("should return true if the positions are in the tab", () => {
-        expect(isInTabLimit(1,2)).toBe(true)
+        expect(isInTabLimit(1, 2)).toBe(true)
     })
     it("should return false if the positions are not in the tab", () => {
         expect(isInTabLimit(19, 2)).toBe(false)
@@ -78,3 +60,25 @@ describe("isInTabLimit", () => {
 //         expect(whichPawnAtPosition()).toBe(false)
 //     })
 // })
+
+describe("isMovableCase", () => {
+    // Test pour le cas où la case est vide et adjacente au pion sélectionné
+    it("should return true if the case is empty and adjacent to the selected pawn", () => {
+        expect(isMovableCase([1, 1], [2, 2], null)).toBe(true)
+    })
+
+    // Test pour le cas où la case n'est pas adjacente au pion sélectionné
+    it("should return false if the case is not adjacent to the selected pawn", () => {
+        expect(isMovableCase([1, 1], [3, 3], null)).toBe(false)
+    })
+
+    // Test pour le cas où la case est adjacente, mais elle n'est pas vide
+    it("should return false if the case is adjacent but not empty", () => {
+        expect(isMovableCase([1, 1], [2, 2], "white")).toBe(false)
+    })
+
+    // Test pour le cas où la case est vide, mais elle n'est pas adjacente
+    it("should return false if the case is empty but not adjacent to the selected pawn", () => {
+        expect(isMovableCase([1, 1], [4, 4], null)).toBe(false)
+    })
+})

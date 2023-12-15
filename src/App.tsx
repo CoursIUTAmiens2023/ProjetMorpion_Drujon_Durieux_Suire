@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Case, CasePawn, CaseQueen } from "./components/Case"
 import { useTabPion, useTurnPion } from "./StateManager/GameManager"
-import { mendatoryEat, mendatoryEatForQueen } from "./utils"
+import { findBgColorGrid, mendatoryEat, mendatoryEatForQueen } from "./utils"
 import useMandatoryPawn from "./StateManager/MandatoryPawn"
 
 export type ColorPawn = "white" | "black" | null
@@ -21,14 +21,14 @@ export default function App() {
     )
 
     useEffect(() => {
-        // const mendatoryPawn = mendatoryEat(tab, turn).concat(
-        //     mendatoryEatForQueen(tab, turn),
-        // )
-        // if (mendatoryPawn.length > 0) {
-        //     setMandatoryPawn(mendatoryPawn)
-        // } else {
-        //     resetMandatoryPawn()
-        // }
+        const mendatoryPawn = mendatoryEat(tab, turn).concat(
+            mendatoryEatForQueen(tab, turn),
+        )
+        if (mendatoryPawn.length > 0) {
+            setMandatoryPawn(mendatoryPawn)
+        } else {
+            resetMandatoryPawn()
+        }
     }, [tab, turn, setMandatoryPawn, resetMandatoryPawn, mendatoryEat])
 
     return (
@@ -41,14 +41,7 @@ export default function App() {
                     const newPion =
                         turn % 2 !== 0 ? pion : tab[tab.length - 1 - i]
 
-                    const bgColor =
-                        newPion.position[0] % 2 === 0
-                            ? newPion.position[1] % 2 === 0
-                                ? "bg-amber-900"
-                                : "bg-amber-700"
-                            : newPion.position[1] % 2 === 0
-                              ? "bg-amber-700"
-                              : "bg-amber-900"
+                    const bgColor = findBgColorGrid(newPion)
 
                     if (newPion.color === null) {
                         return <Case key={i} bgColor={bgColor} pion={newPion} />

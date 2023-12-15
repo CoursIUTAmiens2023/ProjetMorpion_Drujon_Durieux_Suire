@@ -92,9 +92,50 @@ export function whichPawnAtPosition(
     )
 }
 
+/**
+ * Find the background color for the current case position of the grid
+ * @param newPion
+ * @returns
+ * return color for the current case position of the grid
+ */
+export function findBgColorGrid(newPion: Pion) {
+    if (newPion.position[0] % 2 === 0) {
+        if (newPion.position[1] % 2 === 0) {
+            return "bg-amber-900"
+        } else {
+            return "bg-amber-700"
+        }
+    } else {
+        if (newPion.position[1] % 2 === 0) {
+            return "bg-amber-700"
+        } else {
+            return "bg-amber-900"
+        }
+    }
+}
+
 //# endregion utils
 
 //# region normal pawn
+
+/**
+ * Check if the selected move or eat at the edge of the board
+ * @param selectedPion
+ * @returns
+ * Boolean
+ */
+export function isAtEdgeOfBoard(selectedPion: Pion) {
+    if (!selectedPion) return false
+    const { position: selectedPawnPos, color: selectedPawnColor } = selectedPion
+
+    const isWhite = selectedPawnColor === "white"
+
+    if (isWhite) {
+        return selectedPawnPos[0] === 9
+    } else {
+        return selectedPawnPos[0] === 0
+    }
+}
 
 /**
  * Check if the case is empty and adjacent to the selected pawn
@@ -108,13 +149,30 @@ export function isMovableCase(
     selectedPawnPos: number[],
     position: number[],
     color: ColorPawn,
+    turn: number,
 ) {
-    const isForwardCase =
-        position[1] > selectedPawnPos[1] && position[0] < selectedPawnPos[0]
+    const isWhiteTurn = turn % 2 === 0
+    // show the movable case for white pion
+    const isForwardWhite =
+        position[0] === selectedPawnPos[0] - 1 &&
+        (position[1] === selectedPawnPos[1] - 1 ||
+            position[1] === selectedPawnPos[1] + 1)
+
+    // show the movable case for black pion
+    const isForwardBlack =
+        position[0] === selectedPawnPos[0] + 1 &&
+        (position[1] === selectedPawnPos[1] + 1 ||
+            position[1] === selectedPawnPos[1] - 1)
 
     const isEmptyPawn = color === null
 
-    return isForwardCase && isEmptyPawn
+    const isMoveAllowedForWhitePion =
+        !isWhiteTurn && isForwardWhite && isEmptyPawn
+
+    const isMoveAllowedForBlackPion =
+        isWhiteTurn && isForwardBlack && isEmptyPawn
+
+    return isMoveAllowedForWhitePion || isMoveAllowedForBlackPion
 }
 
 /**
@@ -163,7 +221,7 @@ export function isEatMoveWithDirection(
 
     return isEmpyCase && isAdjacentEnnemy
 }
-    
+
 /**
  * Check if the case can be hightlighted in blue for the selected pawn in one direction
  * @param selectedPion
@@ -178,6 +236,8 @@ export function isEatableCase(
     pawn: { pawnPos: number[]; pawnColor: ColorPawn },
     tab: Pion[],
 ) {
+    if (selectedPion.isQueen) return false
+
     return functionInEveryDirection(
         isEatMoveWithDirection,
         selectedPion,
