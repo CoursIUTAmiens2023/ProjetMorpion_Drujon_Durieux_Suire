@@ -1,15 +1,15 @@
 import { create } from "zustand"
-import { Pion } from "../App"
+import { Pawn } from "../App"
 
 interface useMandatoryPawnType {
-    mandatoryPawn: Pion[] | null
-    setMandatoryPawn: (pions: Pion[]) => void
+    mandatoryPawn: Pawn[] | null
+    setMandatoryPawn: (pions: Pawn[]) => void
     resetMandatoryPawn: () => void
 }
 
 const useMandatoryPawn = create<useMandatoryPawnType>((set) => ({
     mandatoryPawn: null,
-    setMandatoryPawn: (pions: Pion[]) => {
+    setMandatoryPawn: (pions: Pawn[]) => {
         set({ mandatoryPawn: pions })
     },
     resetMandatoryPawn: () => set({ mandatoryPawn: null }),

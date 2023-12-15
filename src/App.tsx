@@ -6,7 +6,7 @@ import useMandatoryPawn from "./StateManager/MandatoryPawn"
 
 export type ColorPawn = "white" | "black" | null
 
-export interface Pion {
+export interface Pawn {
     color: ColorPawn
     position: number[]
     isQueen: boolean

@@ -1,4 +1,4 @@
-import { ColorPawn, Pion } from "../App"
+import { ColorPawn, Pawn } from "../App"
 import { DirectionalFunction } from "./type"
 
 //# region utils
@@ -98,7 +98,7 @@ export function whichPawnAtPosition(
  * @returns
  * return color for the current case position of the grid
  */
-export function findBgColorGrid(newPion: Pion) {
+export function findBgColorGrid(newPion: Pawn) {
     if (newPion.position[0] % 2 === 0) {
         if (newPion.position[1] % 2 === 0) {
             return "bg-amber-900"
@@ -114,6 +114,10 @@ export function findBgColorGrid(newPion: Pion) {
     }
 }
 
+export function chooseColorPawnBg(color: ColorPawn) {
+    return color === "white" ? "bg-white" : color === "black" ? "bg-black" : ""
+}
+
 //# endregion utils
 
 //# region normal pawn
@@ -124,7 +128,7 @@ export function findBgColorGrid(newPion: Pion) {
  * @returns
  * Boolean
  */
-export function isAtEdgeOfBoard(selectedPion: Pion) {
+export function isAtEdgeOfBoard(selectedPion: Pawn) {
     if (!selectedPion) return false
     const { position: selectedPawnPos, color: selectedPawnColor } = selectedPion
 
@@ -186,9 +190,9 @@ export function isMovableCase(
 export function isEatMoveWithDirection(
     stepX: number,
     stepY: number,
-    selectedPion: Pion,
+    selectedPion: Pawn,
     pawn: { pawnPos: number[]; pawnColor: ColorPawn },
-    tab: Pion[],
+    tab: Pawn[],
 ) {
     const { pawnPos, pawnColor } = pawn
     const jumpX = selectedPion.position[0] + 2 * stepX
@@ -232,9 +236,9 @@ export function isEatMoveWithDirection(
  * Boolean
  */
 export function isEatableCase(
-    selectedPion: Pion,
+    selectedPion: Pawn,
     pawn: { pawnPos: number[]; pawnColor: ColorPawn },
-    tab: Pion[],
+    tab: Pawn[],
 ) {
     if (selectedPion.isQueen) return false
 
@@ -256,8 +260,8 @@ export function isEatableCase(
 export function isPionToEatWithDirection(
     stepX: number,
     stepY: number,
-    selectedPion: Pion,
-    tab: Pion[],
+    selectedPion: Pawn,
+    tab: Pawn[],
 ) {
     const jumpX = selectedPion.position[0] + 2 * stepX
     const jumpY = selectedPion.position[1] + 2 * stepY
@@ -301,7 +305,7 @@ export function isPionToEatWithDirection(
  * @returns
  * Boolean
  */
-export function isPionToEat(selectedPion: Pion, tab: Pion[]) {
+export function isPionToEat(selectedPion: Pawn, tab: Pawn[]) {
     // Check in every pssibles direction
     return functionInEveryDirection(isPionToEatWithDirection, selectedPion, tab)
 }
@@ -313,14 +317,14 @@ export function isPionToEat(selectedPion: Pion, tab: Pion[]) {
  * @returns
  * List of mandatory pawn
  */
-export function mendatoryEat(tab: Pion[], turn: number) {
+export function mendatoryEat(tab: Pawn[], turn: number) {
     const allyPawnColor = allyColor(turn)
 
     const tabToCheck = tab.filter(
         (p) => p.color === allyPawnColor && !p.isQueen,
     )
 
-    const returnValue: Pion[] = []
+    const returnValue: Pawn[] = []
     tabToCheck.forEach((p) => {
         if (isPionToEat(p, tab)) {
             returnValue.push(p)
@@ -330,32 +334,127 @@ export function mendatoryEat(tab: Pion[], turn: number) {
     return returnValue
 }
 
+/**
+ * Update the grid when the pawn is moved
+ * @param tab
+ * @param selectedPion
+ * @param casePos
+ * @returns
+ * updated grid
+ */
+export function updateGridMovePawn(
+    tab: Pawn[],
+    selectedPion: Pawn,
+    casePos: number[],
+) {
+    return tab.map((p) => {
+        // delete the pawn from the old position
+        if (isSamePosition(p.position, selectedPion.position)) {
+            return {
+                ...p,
+                color: null,
+            }
+        }
+
+        // add the pawn to the new position
+        if (isSamePosition(p.position, casePos)) {
+            return {
+                ...p,
+                color: selectedPion.color,
+            }
+        }
+
+        return p
+    })
+}
+
+/**
+ * Update the grid when the pawn is eaten
+ * @param tab
+ * @param selectedPion
+ * @param casePos
+ * @returns
+ * updated grid
+ */
+export function updateGridEatPawn(
+    tab: Pawn[],
+    selectedPion: Pawn,
+    casePos: number[],
+) {
+    return tab.map((p) => {
+        // delete the pawn from the old position
+        if (isSamePosition(p.position, selectedPion.position)) {
+            return {
+                ...p,
+                color: null,
+            }
+        }
+
+        // add the pawn to the new position
+        if (isSamePosition(p.position, casePos)) {
+            return {
+                ...p,
+                color: selectedPion.color,
+            }
+        }
+
+        // delete the pawn to eat
+        const eatenPosition = [
+            selectedPion.position[0] +
+                (casePos[0] - selectedPion.position[0]) / 2,
+            selectedPion.position[1] +
+                (casePos[1] - selectedPion.position[1]) / 2,
+        ]
+
+        if (isSamePosition(p.position, eatenPosition)) {
+            return {
+                ...p,
+                color: null,
+            }
+        }
+
+        return p
+    })
+}
+
+/**
+ * promote the selected pawn to queen
+ * @param tab
+ * @param selectedPion
+ * @returns
+ * updated selected pawn
+ */
+export function promoteSelectedPawn(tab: Pawn[], selectedPion: Pawn) {
+    return tab
+        .filter((p) => isSamePosition(p.position, selectedPion.position))
+        .map((p) => (p.isQueen = true))
+}
+
 //# endregion
 
 //# region Queen pawn
 
 // show moveable blue case for queen
 
-export function findMovableCaseDirection(
+export function findQueenMovableCaseDirection(
     stepX: number,
     stepY: number,
     movableCases: number[][],
-    selectedPion: Pion,
-    tab: Pion[],
+    selectedPion: Pawn,
+    tab: Pawn[],
 ) {
     const { position: selectedPawnPos, color: selectedPawnColor } = selectedPion
 
-    const row = selectedPawnPos[0] + stepX
-    const col = selectedPawnPos[1] + stepY
-    const stepPos = [row, col]
+    let row = selectedPawnPos[0] + stepX
+    let col = selectedPawnPos[1] + stepY
 
     let isEatablePawnInWay = false
     const allyColor = selectedPawnColor
 
-    while (isInTabLimit(stepPos[0], stepPos[1])) {
+    while (isInTabLimit(row, col)) {
         // Check if threre's a pawn at the current direction
         const pawnAtPosition = tab.find((p) =>
-            isSamePosition(p.position, stepPos),
+            isSamePosition(p.position, [row, col]),
         ) ?? { color: null }
 
         if (pawnAtPosition.color === null) {
@@ -372,35 +471,28 @@ export function findMovableCaseDirection(
             break
         }
 
-        stepPos[0] += stepX
-        stepPos[1] += stepY
+        row += stepX
+        col += stepY
     }
 
     return movableCases
 }
 
-export function queenMovableCase(selectedPion: Pion, tab: Pion[]) {
+export function queenMovableCase(selectedPion: Pawn, tab: Pawn[]) {
     const movableCases: number[][] = []
 
-    console.log(
-        "1",
-        findMovableCaseDirection(-1, -1, movableCases, selectedPion, tab),
-        "2",
-        findMovableCaseDirection(1, -1, movableCases, selectedPion, tab),
-    )
-
     const addedMoveableCases = movableCases.concat(
-        findMovableCaseDirection(1, 1, movableCases, selectedPion, tab),
-        findMovableCaseDirection(1, -1, movableCases, selectedPion, tab),
-        findMovableCaseDirection(-1, 1, movableCases, selectedPion, tab),
-        findMovableCaseDirection(-1, -1, movableCases, selectedPion, tab),
+        findQueenMovableCaseDirection(1, 1, movableCases, selectedPion, tab),
+        findQueenMovableCaseDirection(1, -1, movableCases, selectedPion, tab),
+        findQueenMovableCaseDirection(-1, 1, movableCases, selectedPion, tab),
+        findQueenMovableCaseDirection(-1, -1, movableCases, selectedPion, tab),
     )
 
     return addedMoveableCases
 }
 
 // check if there is a pawn to eat for the queen
-export function isPawnToEatForQueen(selectedPion: Pion, tab: Pion[]) {
+export function isPawnToEatForQueen(selectedPion: Pawn, tab: Pawn[]) {
     const _ennemyColor = ennemyColor(selectedPion.color)
     const isPawnToEatWithDirectionForQueen = (dx: number, dy: number) => {
         let jumpX = selectedPion.position[0] + dx
@@ -444,14 +536,14 @@ export function isPawnToEatForQueen(selectedPion: Pion, tab: Pion[]) {
     return functionInEveryDirection(isPawnToEatWithDirectionForQueen)
 }
 
-export function mendatoryEatForQueen(tab: Pion[], turn: number) {
+export function mendatoryEatForQueen(tab: Pawn[], turn: number) {
     const allyPawnColor = allyColor(turn)
 
-    const isAllyQueen = (p: Pion) => p.color === allyPawnColor && p.isQueen
+    const isAllyQueen = (p: Pawn) => p.color === allyPawnColor && p.isQueen
 
     const tabToCheck = tab.filter((p) => isAllyQueen(p))
 
-    const returnValue: Pion[] = []
+    const returnValue: Pawn[] = []
     tabToCheck.forEach((p) => {
         if (isPawnToEatForQueen(p, tab)) {
             returnValue.push(p)

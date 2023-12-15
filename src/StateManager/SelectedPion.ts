@@ -1,15 +1,15 @@
 import { create } from "zustand"
-import { Pion } from "../App"
+import { Pawn } from "../App"
 
 interface useSelectedPionType {
-    selectedPion: Pion | null
-    setSelectedPion: (pion: Pion) => void
+    selectedPion: Pawn | null
+    setSelectedPion: (pion: Pawn) => void
     resetSelectedPion: () => void
 }
 
 const useSelectedPion = create<useSelectedPionType>((set) => ({
     selectedPion: null,
-    setSelectedPion: (pion: Pion) => set({ selectedPion: pion }),
+    setSelectedPion: (pion: Pawn) => set({ selectedPion: pion }),
     resetSelectedPion: () => set({ selectedPion: null }),
 }))
 

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react"
-import { Pion } from "../../App"
+import { Pawn } from "../../App"
 import { useTabPion, useTurnPion } from "../../StateManager/GameManager"
 import useSelectedPion from "../../StateManager/SelectedPion"
 import {
@@ -9,13 +9,16 @@ import {
     isPawnToEatForQueen,
     isPionToEat,
     isSamePosition,
+    promoteSelectedPawn,
     queenMovableCase,
+    updateGridEatPawn,
+    updateGridMovePawn,
 } from "../../utils/utilsFunction"
 import useMandatoryPawn from "../../StateManager/MandatoryPawn"
 
 export interface CaseProps {
     bgColor: string
-    pion: Pion
+    pion: Pawn
 }
 
 export function Case({ bgColor, pion }: CaseProps) {
@@ -67,37 +70,15 @@ export function Case({ bgColor, pion }: CaseProps) {
     }, [selectedPion, casePos, caseColor])
 
     // move the pawn
-    const Move = useCallback(() => {
+    const MovePawn = useCallback(() => {
         if (!selectedPion) return
 
-        const updatedTab = tab.map((p) => {
-            // delete the pawn from the old position
-            if (isSamePosition(p.position, selectedPion.position)) {
-                return {
-                    ...p,
-                    color: null,
-                }
-            }
-
-            // add the pawn to the new position
-            if (isSamePosition(p.position, casePos)) {
-                return {
-                    ...p,
-                    color: selectedPion.color,
-                }
-            }
-
-            return p
-        })
+        const updatedTab = updateGridMovePawn(tab, selectedPion, casePos)
 
         selectedPion.position = casePos
 
         if (isAtEdgeOfBoard(selectedPion)) {
-            updatedTab
-                .filter((p) =>
-                    isSamePosition(p.position, selectedPion.position),
-                )
-                .map((p) => (p.isQueen = true))
+            promoteSelectedPawn(updatedTab, selectedPion)
         }
 
         setTab(updatedTab)
@@ -106,53 +87,16 @@ export function Case({ bgColor, pion }: CaseProps) {
     }, [selectedPion, casePos, tab, setTab, resetSelectedPion, pastTurn])
 
     // eat the pawn (move the pawn and delete the pawn to eats)
-    const eatPion = useCallback(() => {
+    const eatPawn = useCallback(() => {
         if (!selectedPion) return
 
-        const updatedTab = tab.map((p) => {
-            // delete the pawn from the old position
-            if (isSamePosition(p.position, selectedPion.position)) {
-                return {
-                    ...p,
-                    color: null,
-                }
-            }
-
-            // add the pawn to the new position
-            if (isSamePosition(p.position, casePos)) {
-                return {
-                    ...p,
-                    color: selectedPion.color,
-                }
-            }
-
-            // delete the pawn to eat
-            const eatenPosition = [
-                selectedPion.position[0] +
-                    (casePos[0] - selectedPion.position[0]) / 2,
-                selectedPion.position[1] +
-                    (casePos[1] - selectedPion.position[1]) / 2,
-            ]
-
-            if (isSamePosition(p.position, eatenPosition)) {
-                return {
-                    ...p,
-                    color: null,
-                }
-            }
-
-            return p
-        })
+        const updatedTab = updateGridEatPawn(tab, selectedPion, casePos)
 
         // update the selected pion position
         selectedPion.position = casePos
 
         if (isAtEdgeOfBoard(selectedPion)) {
-            updatedTab
-                .filter((p) =>
-                    isSamePosition(p.position, selectedPion.position),
-                )
-                .map((p) => (p.isQueen = true))
+            promoteSelectedPawn(updatedTab, selectedPion)
         }
 
         // update the tab
@@ -278,10 +222,10 @@ export function Case({ bgColor, pion }: CaseProps) {
                 onClick={() => {
                     if (isMovableCaseMemo) {
                         // Si le joueur clique sur une case déplaçable (case bleue)
-                        Move()
+                        MovePawn()
                     } else if (isEatableCaseMemo) {
                         // Si le joueur clique sur une case mangeable (case bleue)
-                        eatPion()
+                        eatPawn()
                     } else if (isQueenMovableCaseMemo) {
                         // Si le joueur clique sur une case déplaçable (case bleue)
                         MoveQueen()

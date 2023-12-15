@@ -1,10 +1,10 @@
 import { useMemo } from "react"
 import { isSamePosition } from "."
-import { Pion } from "../App"
+import { Pawn } from "../App"
 
 export function useIsMandatoryPawn(
     position: number[],
-    mandatoryPawn: Pion[] | null,
+    mandatoryPawn: Pawn[] | null,
 ) {
     const isMandatoryPawn = useMemo(() => {
         return mandatoryPawn?.some((p) => isSamePosition(p.position, position))
@@ -15,7 +15,7 @@ export function useIsMandatoryPawn(
 
 // find the good border color for the pawn
 export function useBorderColor(
-    selectedPion: Pion | null,
+    selectedPion: Pawn | null,
     position: number[],
     isMandatoryPawn: boolean,
 ) {

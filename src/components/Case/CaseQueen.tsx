@@ -3,7 +3,11 @@ import { useTurnPion } from "../../StateManager/GameManager"
 import useMandatoryPawn from "../../StateManager/MandatoryPawn"
 import useSelectedPion from "../../StateManager/SelectedPion"
 import { CaseProps } from "."
-import { useBorderColor, useIsMandatoryPawn } from "../../utils"
+import {
+    chooseColorPawnBg,
+    useBorderColor,
+    useIsMandatoryPawn,
+} from "../../utils"
 
 export function CaseQueen({ bgColor, pion }: CaseProps) {
     const { position, color } = pion
@@ -33,13 +37,9 @@ export function CaseQueen({ bgColor, pion }: CaseProps) {
                 }}
             >
                 <div
-                    className={` m-2 h-10 w-10 rounded-full ${
-                        color === "white"
-                            ? "bg-white"
-                            : color === "black"
-                              ? "bg-black"
-                              : ""
-                    } ${borderColor}`}
+                    className={` m-2 h-10 w-10 rounded-full ${chooseColorPawnBg(
+                        color,
+                    )} ${borderColor}`}
                 >
                     <span className="flex h-full items-center justify-center text-xl text-yellow-500">
                         <FaCrown />

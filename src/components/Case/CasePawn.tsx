@@ -1,7 +1,11 @@
 import { useTurnPion } from "../../StateManager/GameManager"
 import useSelectedPion from "../../StateManager/SelectedPion"
 import useMandatoryPawn from "../../StateManager/MandatoryPawn"
-import { useBorderColor, useIsMandatoryPawn } from "../../utils"
+import {
+    chooseColorPawnBg,
+    useBorderColor,
+    useIsMandatoryPawn,
+} from "../../utils"
 import { CaseProps } from "."
 
 export function CasePawn({ bgColor, pion }: CaseProps) {
@@ -13,9 +17,6 @@ export function CasePawn({ bgColor, pion }: CaseProps) {
 
     const mandatoryPawn = useMandatoryPawn((state) => state.mandatoryPawn)
 
-    //TODO: afficher si un coup est obligatoire
-
-    // check if the pawn is a mandatory pawn
     const isMandatoryPawn = useIsMandatoryPawn(position, mandatoryPawn)
 
     const borderColor = useBorderColor(selectedPion, position, isMandatoryPawn)
@@ -34,13 +35,9 @@ export function CasePawn({ bgColor, pion }: CaseProps) {
                 }}
             >
                 <div
-                    className={` m-2 h-10 w-10 rounded-full ${
-                        color === "white"
-                            ? "bg-white"
-                            : color === "black"
-                              ? "bg-black"
-                              : ""
-                    } ${borderColor}`}
+                    className={` m-2 h-10 w-10 rounded-full ${chooseColorPawnBg(
+                        color,
+                    )} ${borderColor}`}
                 />
             </button>
         </div>

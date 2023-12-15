@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { Pion } from "../App"
+import { Pawn } from "../App"
 
 interface useTurnType {
     turn: number
@@ -30,19 +30,19 @@ export const useScorePion = create<useScoreType>((set) => ({
 }))
 
 interface useTabType {
-    tab: Pion[]
-    setTab: (tab: Pion[]) => void
+    tab: Pawn[]
+    setTab: (tab: Pawn[]) => void
     resetTab: () => void
 }
 
 const generateInitialGrid = () => {
-    const initialPions: Pion[] = []
+    const initialPions: Pawn[] = []
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
             const position = [i, j]
             if ((i + j) % 2 === 1) {
-                const color = i < 4 ? "white" : i > 5 ? "black" : null
-                initialPions.push({ isQueen: true, color, position })
+                const color = i < 1 ? "white" : i > 8 ? "black" : null
+                initialPions.push({ isQueen: false, color, position })
             } else {
                 initialPions.push({ isQueen: false, color: null, position })
             }
@@ -53,6 +53,6 @@ const generateInitialGrid = () => {
 
 export const useTabPion = create<useTabType>((set) => ({
     tab: generateInitialGrid(),
-    setTab: (tab: Pion[]) => set({ tab }),
+    setTab: (tab: Pawn[]) => set({ tab }),
     resetTab: () => set({ tab: [] }),
 }))
