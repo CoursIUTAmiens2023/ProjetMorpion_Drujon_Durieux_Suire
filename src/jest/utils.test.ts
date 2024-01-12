@@ -11,28 +11,6 @@ describe("isSamePosition", () => {
     })
 })
 
-describe("isMovableCase", () => {
-    // Test pour le cas où la case est vide et adjacente au pion sélectionné
-    it("should return true if the case is empty and adjacent to the selected pawn", () => {
-        expect(isMovableCase([1, 1], [2, 2], null)).toBe(true);
-    });
-
-    // Test pour le cas où la case n'est pas adjacente au pion sélectionné
-    it("should return false if the case is not adjacent to the selected pawn", () => {
-        expect(isMovableCase([1, 1], [3, 3], null)).toBe(false);
-    });
-
-    // Test pour le cas où la case est adjacente, mais elle n'est pas vide
-    it("should return false if the case is adjacent but not empty", () => {
-        expect(isMovableCase([1, 1], [2, 2], "white")).toBe(false);
-    });
-
-    // Test pour le cas où la case est vide, mais elle n'est pas adjacente
-    it("should return false if the case is empty but not adjacent to the selected pawn", () => {
-        expect(isMovableCase([1, 1], [4, 4], null)).toBe(false);
-    });
-});
-
 describe("ennemyColor",( ) => {
     it("should return true if the colors are different", () => {
         expect(ennemyColor("white")).toBe("black")
@@ -78,3 +56,44 @@ describe("isInTabLimit", () => {
 //         expect(whichPawnAtPosition()).toBe(false)
 //     })
 // })
+
+describe("isMovableCase", () => {
+    // Test pour le cas où la case est vide et adjacente au pion sélectionné
+    it("should return true if the case is empty and adjacent to the selected pawn", () => {
+        expect(isMovableCase([1, 1], [2, 2], null)).toBe(true);
+    });
+
+    // Test pour le cas où la case n'est pas adjacente au pion sélectionné
+    it("should return false if the case is not adjacent to the selected pawn", () => {
+        expect(isMovableCase([1, 1], [3, 3], null)).toBe(false);
+    });
+
+    // Test pour le cas où la case est adjacente, mais elle n'est pas vide
+    it("should return false if the case is adjacent but not empty", () => {
+        expect(isMovableCase([1, 1], [2, 2], "white")).toBe(false);
+    });
+
+    // Test pour le cas où la case est vide, mais elle n'est pas adjacente
+    it("should return false if the case is empty but not adjacent to the selected pawn", () => {
+        expect(isMovableCase([1, 1], [4, 4], null)).toBe(false);
+    });
+});
+
+describe('isEatMoveWithDirection', () => {
+    it('should return false if jump position is out of bounds', () => {
+      expect(isEatMoveWithDirection(1, 1, { position: [1, 1], color: 'white' }, { pawnPos: [0, 0], pawnColor: 'white' }, { position: [2, 2], color: 'black' })).toBe(false);
+    });
+  
+    it('should return false if the jump position is not empty', () => {
+      expect(isEatMoveWithDirection(1, 1, { position: [1, 1], color: 'white' }, { pawnPos: [2, 2], pawnColor: 'white' }, { position: [2, 2], color: 'black' })).toBe(false);
+    });
+  
+    it('should return false if there is no adjacent enemy pawn', () => {
+      expect(isEatMoveWithDirection(1, 1, { position: [1, 1], color: 'white' }, { pawnPos: [3, 3], pawnColor: 'white' }, { position: [2, 2], color: 'black' })).toBe(false);
+    });
+  
+    it('should return true if jump position is valid and conditions are met', () => {
+      expect(isEatMoveWithDirection(1, 1, { position: [1, 1], color: 'white' }, { pawnPos: [2, 2], pawnColor: 'white' }, { position: [2, 2], color: 'black' })).toBe(true);
+    });
+  
+  });
