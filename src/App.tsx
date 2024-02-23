@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react"
-import { Confetti } from "./Composant/Conffeti"
 
 type Player = "X" | "O" | null
 
@@ -115,13 +114,10 @@ function App() {
                             <span className="w-40">{status}</span>
                         </div>
                     ) : (
-                        <>
-                            <Confetti />
-                            <div className="flex justify-center gap-4 rounded-full border-2 border-orange-500 bg-yellow-200 px-4 py-2">
-                                <span className="font-bold">Gagnant:</span>
-                                <span>{status}</span>
-                            </div>
-                        </>
+                        <div className="flex justify-center gap-4 rounded-full border-2 border-orange-500 bg-yellow-200 px-4 py-2">
+                            <span className="font-bold">Gagnant:</span>
+                            <span>{status}</span>
+                        </div>
                     )}
                 </div>
                 <div className="flex w-64 flex-1 justify-center">
