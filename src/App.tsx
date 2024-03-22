@@ -2,6 +2,8 @@ import { useState } from "react"
 import { Player } from "./Utils/type"
 import { calculateStatus, calculateWinner } from "./Utils"
 import { Board } from "./Components/Board"
+import Confetti from "react-confetti"
+import { useRef } from "react"
 
 const INITIAL_BOARD = Array(9).fill(null)
 
@@ -21,6 +23,8 @@ function App() {
         setTurn(newHistory.length)
     }
 
+    const audioRef = useRef(null)
+
     return (
         <div className="flex size-full items-center justify-center bg-[#d39efc]">
             <div className="flex h-full flex-col justify-center gap-5">
@@ -34,6 +38,12 @@ function App() {
                         <div className="flex justify-center gap-4 rounded-full border-2 border-orange-500 bg-yellow-200 px-4 py-2">
                             <span className="font-bold">Gagnant:</span>
                             <span>{status}</span>
+                            <Confetti />
+                            <audio
+                                ref={audioRef}
+                                src="/SoundEffect/confettis.mp3"
+                                autoPlay
+                            />
                         </div>
                     )}
                 </div>
@@ -53,6 +63,13 @@ function App() {
                         </button>
                     )}
                 </div>
+                {turn === 9 && !winner && (
+                    <audio
+                        ref={audioRef}
+                        src="/SoundEffect/ring.mp3"
+                        autoPlay
+                    />
+                )}
             </div>
         </div>
     )
