@@ -22,7 +22,7 @@ function App() {
     }
 
     return (
-        <div className="flex size-full items-center justify-center bg-[#FFE3F8]">
+        <div className="flex size-full items-center justify-center bg-[#d39efc]">
             <div className="flex h-full flex-col justify-center gap-5">
                 <div className="flex flex-1 items-end justify-center">
                     {!winner ? (

@@ -15,7 +15,7 @@ export function Square({ value, onClick }: SquareProps) {
 
     return (
         <button
-            className={`size-32 border-2 border-[#364439] bg-[#e3ffea]  ${colorValue}`}
+            className={`size-32 border-2 border-[#364439] bg-[#f1e8f7]  ${colorValue}`}
             onClick={onClick}
         >
             <span className="text-4xl">{value}</span>

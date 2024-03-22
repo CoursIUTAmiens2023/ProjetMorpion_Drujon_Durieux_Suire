@@ -3,6 +3,7 @@ import { Square } from "../Square"
 
 interface BoardProps {
     squares: Player[]
+    // eslint-disable-next-line no-unused-vars
     onClick: (i: number) => void
 }
 
@@ -12,7 +13,7 @@ export function Board({ squares, onClick }: BoardProps) {
     )
 
     return (
-        <div className="border-2 border-[#364439]">
+        <div className="border-2 border-[#53366c]">
             <div className="flex">
                 {renderSquare(0)}
                 {renderSquare(1)}
