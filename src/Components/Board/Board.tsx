@@ -9,7 +9,7 @@ interface BoardProps {
 
 export function Board({ squares, onClick }: BoardProps) {
     const renderSquare = (i: number) => (
-        <Square value={squares[i]} onClick={() => onClick(i)} />
+        <Square id={i} value={squares[i]} onClick={() => onClick(i)} />
     )
 
     return (

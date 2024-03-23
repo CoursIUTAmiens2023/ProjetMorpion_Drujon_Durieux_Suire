@@ -11,8 +11,15 @@ module.exports = {
         "prettier",
         "plugin:react/recommended",
         "plugin:tailwindcss/recommended",
+        "plugin:cypress/recommended",
     ],
-    plugins: ["@typescript-eslint", "react", "prettier", "tailwindcss"],
+    plugins: [
+        "@typescript-eslint",
+        "react",
+        "prettier",
+        "tailwindcss",
+        "cypress",
+    ],
     rules: {
         "prettier/prettier": ["error", { endOfLine: "auto" }],
         "react/react-in-jsx-scope": "off",
