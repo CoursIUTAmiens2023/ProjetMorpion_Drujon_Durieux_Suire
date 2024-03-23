@@ -1,30 +1,39 @@
-# React + TypeScript + Vite
+# Jeu de Morpion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est un jeu de morpion développé en utilisant React + TS et vite.
 
-Currently, two official plugins are available:
+## Installation et lancement
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Clonez ce dépôt sur votre machine locale.
+2. Naviguez vers le répertoire du projet.
+3. Exécutez la commande suivante pour installer les dépendances :
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+4. Exécutez la commande suivante pour lancer l'application :
+
+```bash
+npm run dev
+```
+
+## Tests unitaires avec Jest
+
+Pour exécuter les tests unitaires, utilisez la commande suivante :
+
+```bash
+npm run jest
+```
+
+### Tests e2e avec cypress
+
+1. Pour exécuter les tests e2e, utilisez la commande suivante :
+
+```bash
+npm run cypress:open
+```
+
+2. cliquez sur E2E Testing
+3. Choisir un navigateur pour lancer les tests (Chrome de préference)
+4. Puis lancez la spec Gameplay.cy.ts (Le fichier de test e2e)
