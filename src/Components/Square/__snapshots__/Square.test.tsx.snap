@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Square should match the snapshot when value O 1`] = `
+<div>
+  <button
+    class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+  >
+    <span
+      class="text-4xl"
+    >
+      O
+    </span>
+  </button>
+</div>
+`;
+
+exports[`Square should match the snapshot when value X 1`] = `
+<div>
+  <button
+    class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+  >
+    <span
+      class="text-4xl"
+    >
+      X
+    </span>
+  </button>
+</div>
+`;
+
+exports[`Square should match the snapshot when value null 1`] = `
+<div>
+  <button
+    class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+  >
+    <span
+      class="text-4xl"
+    />
+  </button>
+</div>
+`;

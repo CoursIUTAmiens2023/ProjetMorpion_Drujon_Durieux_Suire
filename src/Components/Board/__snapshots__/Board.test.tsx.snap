@@ -1,0 +1,289 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Board should match the snapshot when square are O 1`] = `
+<div>
+  <div
+    class="border-2 border-[#53366c]"
+  >
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-blue-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          O
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Board should match the snapshot when square are X 1`] = `
+<div>
+  <div
+    class="border-2 border-[#53366c]"
+  >
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] text-red-600"
+      >
+        <span
+          class="text-4xl"
+        >
+          X
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Board should match the snapshot when square are null 1`] = `
+<div>
+  <div
+    class="border-2 border-[#53366c]"
+  >
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+      <button
+        class="size-32 border-2 border-[#364439] bg-[#f1e8f7] "
+      >
+        <span
+          class="text-4xl"
+        />
+      </button>
+    </div>
+  </div>
+</div>
+`;
