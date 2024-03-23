@@ -1,6 +1,6 @@
 import { Player } from "./type"
 
-export function calculateWinner(squares: Player[]): Player | null {
+export function useCalculateWinner(squares: Player[]): Player | null {
     const lines = [
         [0, 1, 2],
         [3, 4, 5],
@@ -25,7 +25,7 @@ export function calculateWinner(squares: Player[]): Player | null {
     return null
 }
 
-export function calculateStatus(winner: Player | null, turn: number) {
+export function useCalculateStatus(winner: Player | null, turn: number) {
     if (winner) {
         return `${winner}`
     } else if (turn === 9) {

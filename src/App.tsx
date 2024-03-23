@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Player } from "./Utils/type"
-import { calculateStatus, calculateWinner } from "./Utils"
+import { useCalculateStatus, useCalculateWinner } from "./Utils"
 import { Board } from "./Components/Board"
 import Confetti from "react-confetti"
 import { useRef } from "react"
@@ -11,8 +11,8 @@ function App() {
     const [history, setHistory] = useState<Player[][]>([INITIAL_BOARD])
     const [turn, setTurn] = useState(0)
     const current = history[turn]
-    const winner = calculateWinner(current)
-    const status = calculateStatus(winner, turn)
+    const winner = useCalculateWinner(current)
+    const status = useCalculateStatus(winner, turn)
 
     const handleClick = (i: number) => {
         const newHistory = history.slice(0, turn + 1)
